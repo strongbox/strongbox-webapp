@@ -1,6 +1,6 @@
-package org.carlspring.repositoryunit.filters;
+package org.carlspring.strongbox.filters;
 
-import org.carlspring.repositoryunit.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ConfigurationManager;
 
 import javax.servlet.*;
 import java.io.IOException;

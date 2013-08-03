@@ -1,9 +1,9 @@
-package org.carlspring.repositoryunit.rest;
+package org.carlspring.strongbox.rest;
 
 import org.apache.maven.artifact.Artifact;
-import org.carlspring.repositoryunit.annotations.ArtifactExistenceState;
-import org.carlspring.repositoryunit.annotations.ArtifactResource;
-import org.carlspring.repositoryunit.annotations.ArtifactResourceMapper;
+import org.carlspring.strongbox.annotations.ArtifactExistenceState;
+import org.carlspring.strongbox.annotations.ArtifactResource;
+import org.carlspring.strongbox.annotations.ArtifactResourceMapper;
 import org.carlspring.maven.commons.util.ArtifactUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

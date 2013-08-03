@@ -1,6 +1,6 @@
-package org.carlspring.repositoryunit.filters;
+package org.carlspring.strongbox.filters;
 
-import org.carlspring.repositoryunit.storage.resolvers.ArtifactResolutionService;
+import org.carlspring.strongbox.storage.resolvers.ArtifactResolutionService;
 
 import javax.servlet.*;
 import java.io.IOException;

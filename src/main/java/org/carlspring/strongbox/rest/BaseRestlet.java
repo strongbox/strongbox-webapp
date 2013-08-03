@@ -1,4 +1,4 @@
-package org.carlspring.repositoryunit.rest;
+package org.carlspring.strongbox.rest;
 
 /**
  * @author Martin Todorov

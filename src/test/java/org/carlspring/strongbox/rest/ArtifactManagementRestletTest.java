@@ -1,10 +1,10 @@
-package org.carlspring.repositoryunit.rest;
+package org.carlspring.strongbox.rest;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.carlspring.repositoryunit.client.ArtifactClient;
-// import org.carlspring.repositoryunit.testing.AbstractRepositoryUnitTestCase;
+import org.carlspring.strongbox.client.ArtifactClient;
+// import org.carlspring.strongbox.testing.AbstractRepositoryUnitTestCase;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

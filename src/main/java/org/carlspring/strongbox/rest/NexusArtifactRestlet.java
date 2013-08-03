@@ -1,8 +1,8 @@
-package org.carlspring.repositoryunit.rest;
+package org.carlspring.strongbox.rest;
 
 import org.carlspring.maven.commons.util.ArtifactUtils;
-import org.carlspring.repositoryunit.storage.resolvers.ArtifactResolutionException;
-import org.carlspring.repositoryunit.storage.resolvers.ArtifactResolutionService;
+import org.carlspring.strongbox.storage.resolvers.ArtifactResolutionException;
+import org.carlspring.strongbox.storage.resolvers.ArtifactResolutionService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
