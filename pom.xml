@@ -34,31 +34,14 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>strongbox-web-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>strongbox-client</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>strongbox-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>strongbox-storage</artifactId>
+            <artifactId>strongbox-web-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>strongbox-test</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency-->
 
         <dependency>
             <groupId>org.carlspring.maven</groupId>
@@ -121,10 +104,9 @@
         </dependency>
     </dependencies>
 
-    <!--
     <profiles>
         <profile>
-            <id>run-jetty</id>
+            <id>run-it-tests</id>
             <activation>
                 <property>
                     <name>!skipTests</name>
@@ -132,6 +114,93 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.8</version>
+                        <executions>
+                            <execution>
+                                <id>unpack-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>strongbox-testing-resources</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/strongbox</outputDirectory>
+                                            <includes>etc/configuration.xml</includes>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>strongbox-testing-resources</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/strongbox/etc</outputDirectory>
+                                            <includes>log4j.properties</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>unpack-web-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>strongbox-testing-web-resources</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/strongbox</outputDirectory>
+                                            <includes>webapp/**</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- This plugin needs to be defined first, as the execution of the Jetty Maven plugin
+                         which shuts down Jetty overlaps with this and shuts it down before the tests are done.-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>1.8</version>
+
+                        <configuration>
+                            <debug>true</debug>
+                            <preBuildHookScript>clean</preBuildHookScript>
+                            <postBuildHookScript>verify</postBuildHookScript>
+                            <settingsFile>src/it/settings.xml</settingsFile>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>invoker-integration-tests</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
@@ -143,6 +212,7 @@
 
                             <webApp>
                                 <contextPath>/</contextPath>
+                                <descriptor>${project.build.directory}/strongbox/webapp/WEB-INF/web.xml</descriptor>
                             </webApp>
 
                             <httpConnector>
@@ -151,6 +221,17 @@
 
                             <stopPort>19081</stopPort>
                             <stopKey>53AS9DS1FD8E3WEFEW9GR1ER8G2ER0WE31</stopKey>
+
+                            <systemProperties>
+                                <!--systemProperty>
+                                    <name>repository.config.xml</name>
+                                    <value>${basedir}/src/main/resources/etc/configuration.xml</value>
+                                </systemProperty-->
+                                <systemProperty>
+                                    <name>log4j.configuration</name>
+                                    <value>file:${basedir}/src/main/resources/log4j.properties</value>
+                                </systemProperty>
+                            </systemProperties>
                         </configuration>
 
                         <executions>
@@ -171,11 +252,29 @@
                                 </goals>
                             </execution>
                         </executions>
+
+                        <dependencies>
+                            <dependency>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>strongbox-testing-resources</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+
+                            <dependency>
+                                <groupId>org.eclipse.jetty</groupId>
+                                <artifactId>jetty-util</artifactId>
+                                <version>${version.jetty}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.eclipse.jetty</groupId>
+                                <artifactId>jetty-runner</artifactId>
+                                <version>${version.jetty}</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
-    -->
 
 </project>
