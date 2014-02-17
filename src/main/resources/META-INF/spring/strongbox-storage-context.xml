@@ -8,6 +8,8 @@
     <context:annotation-config/>
     <context:component-scan base-package="org.carlspring.strongbox"/>
 
+    <bean id="configurationResourceResolver" class="org.carlspring.strongbox.resource.ConfigurationResourceResolver" />
+
     <bean id="configurationManager"
           class="org.carlspring.strongbox.configuration.ConfigurationManager"
           init-method="init">
@@ -23,5 +25,8 @@
         <!-- The maximum time checksums should be kept in the cache: -->
         <property name="cachedChecksumLifetime" value="60000"/>
     </bean>
+
+    <bean id="artifactResolutionService" class="org.carlspring.strongbox.storage.resolvers.ArtifactResolutionService"
+          init-method="initialize"/>
 
 </beans>
