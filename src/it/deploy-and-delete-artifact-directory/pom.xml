@@ -4,7 +4,7 @@
 
     <groupId>org.carlspring.maven</groupId>
     <artifactId>test-project</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.2</version>
 
     <dependencies>
         <dependency>
@@ -21,9 +21,12 @@
     </dependencies>
 
     <distributionManagement>
+        <repository>
+            <id>releases-with-valid-user</id>
+            <url>http://localhost:48080/storages/storage0/releases/</url>
+        </repository>
         <snapshotRepository>
-            <id>snapshots-with-invalid-user</id>
-            <name>snapshots-with-invalid-user</name>
+            <id>snapshots-with-valid-user</id>
             <url>http://localhost:48080/storages/storage0/snapshots/</url>
             <uniqueVersion>true</uniqueVersion>
         </snapshotRepository>
