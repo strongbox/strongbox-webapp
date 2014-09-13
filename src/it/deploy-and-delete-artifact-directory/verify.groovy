@@ -1,9 +1,7 @@
 import org.carlspring.strongbox.client.ArtifactClient
 
 
-def client = new ArtifactClient();
-client.setUsername("maven");
-client.setPassword("password");
+def client = ArtifactClient.getTestInstance();
 
 client.delete("storage0", "releases", "org/carlspring/maven/test-project/1.0.2");
 

@@ -4,8 +4,6 @@ import org.carlspring.strongbox.client.ArtifactClient
 
 def artifact = ArtifactUtils.getArtifactFromGAV("org.carlspring.maven:test-project:1.0.6");
 
-def client = new ArtifactClient();
-client.setUsername("maven");
-client.setPassword("password");
+def client = ArtifactClient.getTestInstance();
 
 return client.artifactExists(artifact, "storage0", "releases");

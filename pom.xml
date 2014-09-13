@@ -9,7 +9,6 @@
         <groupId>org.carlspring.strongbox</groupId>
         <artifactId>strongbox-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../strongbox-parent</relativePath>
     </parent>
 
     <artifactId>strongbox-webapp</artifactId>
@@ -78,6 +77,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>strongbox-storage-booter-resources</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>strongbox-storage-indexing-resources</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -129,10 +133,123 @@
 
     <profiles>
         <profile>
+            <id>set-default-ports</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>skipTests</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+
+            <properties>
+                <!-- Default ports for local development: -->
+                <port.jetty.listen>48080</port.jetty.listen>
+                <port.jetty.shutdown>19081</port.jetty.shutdown>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <version>${version.jetty}</version>
+
+                        <configuration>
+                            <stopPort>19081</stopPort>
+
+                            <httpConnector>
+                                <port>48080</port>
+                            </httpConnector>
+                            <systemProperties>
+                                <systemProperty>
+                                    <name>port.jetty.listen</name>
+                                    <value>48080</value>
+                                </systemProperty>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>reserve-ports</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.9</version>
+                        <executions>
+                            <execution>
+                                <id>reserve-network-port</id>
+                                <goals>
+                                    <goal>reserve-network-port</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <minPortNumber>48080</minPortNumber>
+                                    <portNames>
+                                        <portName>port.jetty.listen</portName>
+                                        <portName>port.jetty.shutdown</portName>
+                                    </portNames>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.carlspring.maven</groupId>
+                        <artifactId>system-properties-maven-plugin</artifactId>
+                        <version>1.0</version>
+
+                        <executions>
+                            <execution>
+                                <id>set-properties</id>
+
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>set</goal>
+                                </goals>
+
+                                <configuration>
+                                    <properties>
+                                        <property>
+                                            <name>port.jetty.listen</name>
+                                            <value>${port.jetty.listen}</value>
+                                        </property>
+                                    </properties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <version>${version.jetty}</version>
+
+                        <configuration>
+                            <stopPort>${port.jetty.shutdown}</stopPort>
+
+                            <httpConnector>
+                                <port>${port.jetty.listen}</port>
+                            </httpConnector>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>run-it-tests</id>
             <activation>
                 <property>
-                    <name>!skipTests</name>
+                    <name>skipTests</name>
+                    <value>!true</value>
                 </property>
             </activation>
 
@@ -272,6 +389,7 @@
                             <addTestClassPath>true</addTestClassPath>
                             <properties>
                                 <strongbox.storage.booter.basedir>${basedir}/target/storages</strongbox.storage.booter.basedir>
+                                <port.jetty.listen>${port.jetty.listen}</port.jetty.listen>
                             </properties>
                         </configuration>
 
@@ -330,7 +448,6 @@
                                 <descriptor>${dir.strongbox}/webapp/WEB-INF/web.xml</descriptor>
                             </webApp>
 
-                            <stopPort>19081</stopPort>
                             <stopKey>53AS9DS1FD8E3WEFEW9GR1ER8G2ER0WE31</stopKey>
                             <stopWait>10</stopWait>
 
@@ -357,7 +474,10 @@
 
                             <useTestScope>true</useTestScope>
 
+                            <!-- Restore the following for SSL/HTTPSL when the time comes:
                             <jettyXml>${dir.jetty.etc}/jetty.xml,${dir.jetty.etc}/jetty-http.xml,${dir.jetty.etc}/jetty-ssl.xml,${dir.jetty.etc}/jetty-https.xml</jettyXml>
+                            -->
+                            <jettyXml>${dir.jetty.etc}/jetty.xml,${dir.jetty.etc}/jetty-http.xml</jettyXml>
                         </configuration>
 
                         <executions>
