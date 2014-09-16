@@ -6,9 +6,8 @@ try
 {
     def artifact = ArtifactUtils.getArtifactFromGAV("org.carlspring.maven:test-project:1.0.4");
 
-    def client = new ArtifactClient();
-    client.setUsername("maven");
-    client.setPassword("password");
+    def client = ArtifactClient.getTestInstance();
+
     client.deleteArtifact(artifact, "storage0", "releases-in-memory");
 
     return !client.artifactExists(artifact, "storage0", "releases-in-memory");
