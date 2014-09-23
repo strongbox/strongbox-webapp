@@ -192,37 +192,10 @@
                                 </goals>
                                 <phase>initialize</phase>
                                 <configuration>
-                                    <minPortNumber>48080</minPortNumber>
                                     <portNames>
                                         <portName>port.jetty.listen</portName>
                                         <portName>port.jetty.shutdown</portName>
                                     </portNames>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.carlspring.maven</groupId>
-                        <artifactId>system-properties-maven-plugin</artifactId>
-                        <version>1.0</version>
-
-                        <executions>
-                            <execution>
-                                <id>set-properties</id>
-
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>set</goal>
-                                </goals>
-
-                                <configuration>
-                                    <properties>
-                                        <property>
-                                            <name>port.jetty.listen</name>
-                                            <value>${port.jetty.listen}</value>
-                                        </property>
-                                    </properties>
                                 </configuration>
                             </execution>
                         </executions>
@@ -431,16 +404,6 @@
                         <version>${version.jetty}</version>
 
                         <configuration>
-                            <scanIntervalSeconds>10</scanIntervalSeconds>
-                            <scanTargetPatterns>
-                                <scanTargetPattern>
-                                    <directory>${basedir}/src/it</directory>
-                                    <excludes>
-                                        <exclude>**/**</exclude>
-                                    </excludes>
-                                </scanTargetPattern>
-                            </scanTargetPatterns>
-
                             <daemon>true</daemon>
 
                             <webApp>
@@ -511,6 +474,32 @@
                                 <version>${version.jetty}</version>
                             </dependency>
                         </dependencies>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.carlspring.maven</groupId>
+                        <artifactId>system-properties-maven-plugin</artifactId>
+                        <version>1.0</version>
+
+                        <executions>
+                            <execution>
+                                <id>set-properties</id>
+
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>set</goal>
+                                </goals>
+
+                                <configuration>
+                                    <properties>
+                                        <property>
+                                            <name>port.jetty.listen</name>
+                                            <value>${port.jetty.listen}</value>
+                                        </property>
+                                    </properties>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
