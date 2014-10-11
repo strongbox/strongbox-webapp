@@ -118,13 +118,6 @@
             <artifactId>maven-core</artifactId>
         </dependency>
 
-        <!-- Use Log4J for logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <!--<scope>provided</scope>-->
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -239,7 +232,7 @@
                         <version>2.8</version>
                         <executions>
                             <execution>
-                                <id>unpack-resources-log4j</id>
+                                <id>unpack-resources-logging</id>
                                 <phase>process-resources</phase>
                                 <goals>
                                     <goal>unpack</goal>
@@ -254,7 +247,7 @@
 
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${dir.strongbox}/etc</outputDirectory>
-                                            <includes>log4j.properties</includes>
+                                            <includes>logback.xml</includes>
                                         </artifactItem>
                                     </artifactItems>
                                 </configuration>
@@ -296,7 +289,7 @@
 
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${dir.strongbox}/etc</outputDirectory>
-                                            <includes>log4j.properties</includes>
+                                            <includes>logback.xml</includes>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>${project.groupId}</groupId>
@@ -380,6 +373,11 @@
                         <dependencies>
                             <dependency>
                                 <groupId>org.carlspring.strongbox</groupId>
+                                <artifactId>strongbox-commons</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.carlspring.strongbox</groupId>
                                 <artifactId>strongbox-client</artifactId>
                                 <version>${project.version}</version>
                             </dependency>
@@ -428,10 +426,6 @@
                                 <systemProperty>
                                     <name>strongbox.storage.booter.basedir</name>
                                     <value>${basedir}/target/storages</value>
-                                </systemProperty>
-                                <systemProperty>
-                                    <name>log4j.configuration</name>
-                                    <value>file:${dir.strongbox}/etc/log4j.properties</value>
                                 </systemProperty>
                             </systemProperties>
 
