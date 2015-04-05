@@ -6,7 +6,7 @@ try
 {
     def artifact = ArtifactUtils.getArtifactFromGAV("org.carlspring.maven:test-project:1.0.4");
 
-    def client = ArtifactClient.getTestInstance();
+    def client = new ArtifactClient();
 
     client.deleteArtifact(artifact, "storage0", "releases-in-memory");
 
