@@ -9,6 +9,7 @@
         <groupId>org.carlspring.strongbox</groupId>
         <artifactId>strongbox-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath/>
     </parent>
 
     <artifactId>strongbox-webapp</artifactId>
@@ -33,6 +34,13 @@
 
     <inceptionYear>2014</inceptionYear>
 
+    <scm>
+        <connection>scm:git:https://github.com/strongbox/strongbox-webapp.git</connection>
+        <developerConnection>scm:git:https://github.com/strongbox/strongbox-webapp.git</developerConnection>
+        <url>https://github.com/strongbox/strongbox-webapp/tree/${project.scm.tag}</url>
+        <tag>master</tag>
+    </scm>
+
     <build>
         <plugins>
             <plugin>
@@ -42,6 +50,26 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>de.jutzig</groupId>
+                <artifactId>github-release-plugin</artifactId>
+                <version>1.1.1</version>
+                <configuration>
+                    <description>Strongbox webapp distribution version ${project.version}.</description>
+                    <releaseName>${project.version}</releaseName>
+                    <tag>${project.version}</tag>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>release</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -369,7 +397,7 @@
                             <dependency>
                                 <groupId>org.carlspring.maven</groupId>
                                 <artifactId>maven-commons</artifactId>
-                                <version>${version.maven.commons}</version>
+                                <version>${version.carlspring.maven.commons}</version>
                             </dependency>
 
                             <dependency>
