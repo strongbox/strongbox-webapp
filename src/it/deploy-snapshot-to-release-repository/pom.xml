@@ -16,7 +16,7 @@
         <dependency>
             <groupId>org.carlspring.maven</groupId>
             <artifactId>maven-commons</artifactId>
-            <version>@version.maven.commons@</version>
+            <version>@version.carlspring.maven.commons@</version>
         </dependency>
     </dependencies>
 
