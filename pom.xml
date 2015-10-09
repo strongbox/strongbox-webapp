@@ -51,6 +51,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+
+                <configuration>
+                    <webXml>${project.build.directory}/strongbox/webapp/WEB-INF/web.xml</webXml>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -327,194 +335,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-
-                    <!-- This plugin needs to be defined first, as the execution of the Jetty Maven plugin
-                         which shuts down Jetty overlaps with this and shuts it down before the tests are done.-->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-invoker-plugin</artifactId>
-                        <version>1.9</version>
-
-                        <configuration>
-                            <debug>true</debug>
-                            <preBuildHookScript>clean</preBuildHookScript>
-                            <postBuildHookScript>verify</postBuildHookScript>
-                            <settingsFile>src/it/settings.xml</settingsFile>
-                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                            <addTestClassPath>true</addTestClassPath>
-                            <properties>
-                                <strongbox.home>${project.build.directory}/strongbox</strongbox.home>
-                                <strongbox.vault>${project.build.directory}/strongbox-vault</strongbox.vault>
-                                <strongbox.storage.booter.basedir>${basedir}/target/storages</strongbox.storage.booter.basedir>
-                                <port.jetty.listen>${port.jetty.listen}</port.jetty.listen>
-                            </properties>
-                        </configuration>
-
-                        <executions>
-                            <execution>
-                                <id>invoker-integration-tests</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-
-                                <phase>test</phase>
-                            </execution>
-                        </executions>
-
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.carlspring.strongbox</groupId>
-                                <artifactId>strongbox-commons</artifactId>
-                                <version>${project.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.carlspring.strongbox</groupId>
-                                <artifactId>strongbox-client</artifactId>
-                                <version>${project.version}</version>
-                            </dependency>
-
-                            <dependency>
-                                <groupId>org.carlspring.maven</groupId>
-                                <artifactId>maven-commons</artifactId>
-                                <version>${version.carlspring.maven.commons}</version>
-                            </dependency>
-
-                            <dependency>
-                                <groupId>org.codehaus.groovy</groupId>
-                                <artifactId>groovy-all</artifactId>
-                                <version>2.3.0-beta-2</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <version>${version.jetty}</version>
-
-                        <configuration>
-                            <daemon>true</daemon>
-
-                            <webApp>
-                                <contextPath>/</contextPath>
-                                <descriptor>${dir.strongbox.home}/webapp/WEB-INF/web.xml</descriptor>
-                            </webApp>
-
-                            <stopPort>${port.jetty.shutdown}</stopPort>
-                            <stopKey>53AS9DS1FD8E3WEFEW9GR1ER8G2ER0WE31</stopKey>
-                            <stopWait>10</stopWait>
-
-                            <httpConnector>
-                                <port>${port.jetty.listen}</port>
-                            </httpConnector>
-
-                            <systemProperties>
-                                <force>true</force>
-
-                                <systemProperty>
-                                    <name>strongbox.home</name>
-                                    <value>${dir.strongbox.home}</value>
-                                </systemProperty>
-                                <systemProperty>
-                                    <name>strongbox.vault</name>
-                                    <value>${dir.strongbox.vault}</value>
-                                </systemProperty>
-                                <systemProperty>
-                                    <name>repository.config.xml</name>
-                                    <value>${dir.strongbox.home}/etc/conf/strongbox.xml</value>
-                                </systemProperty>
-                                <systemProperty>
-                                    <name>strongbox.storage.booter.basedir</name>
-                                    <value>${dir.strongbox.vault}/storages</value>
-                                </systemProperty>
-                            </systemProperties>
-
-                            <useTestScope>true</useTestScope>
-
-                            <!-- Restore the following for SSL/HTTPSL when the time comes:
-                            <jettyXml>${dir.jetty.etc}/jetty.xml,${dir.jetty.etc}/jetty-http.xml,${dir.jetty.etc}/jetty-ssl.xml,${dir.jetty.etc}/jetty-https.xml</jettyXml>
-                            -->
-                            <jettyXml>${dir.jetty.etc}/jetty.xml,${dir.jetty.etc}/jetty-http.xml</jettyXml>
-                        </configuration>
-
-                        <executions>
-                            <execution>
-                                <id>jetty-start</id>
-
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>jetty-stop</id>
-
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.eclipse.jetty</groupId>
-                                <artifactId>jetty-util</artifactId>
-                                <version>${version.jetty}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.eclipse.jetty</groupId>
-                                <artifactId>jetty-runner</artifactId>
-                                <version>${version.jetty}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.carlspring.maven</groupId>
-                        <artifactId>system-properties-maven-plugin</artifactId>
-                        <version>1.0</version>
-
-                        <executions>
-                            <execution>
-                                <id>set-properties</id>
-
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>set</goal>
-                                </goals>
-
-                                <configuration>
-                                    <properties>
-                                        <property>
-                                            <name>port.jetty.listen</name>
-                                            <value>${port.jetty.listen}</value>
-                                        </property>
-                                    </properties>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>block-jetty</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <version>${version.jetty}</version>
-
-                        <configuration>
-                            <daemon>false</daemon>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
