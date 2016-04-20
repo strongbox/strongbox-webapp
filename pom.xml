@@ -200,7 +200,7 @@
                                     2) file e.g: "${basedir}/src/main/resources/markdown.hbs",
                                         "${basedir}/src/main/resources/template/hello.html" -->
                                     <templatePath>${basedir}/src/main/swagger/templates/strapdown.html.hbs</templatePath>
-                                    <outputPath>${project.build.directory}/generated/documentation/docs/rest/document.html</outputPath>
+                                    <outputPath>${project.build.directory}/generated/documentation/docs/rest/api.html</outputPath>
                                     <swaggerDirectory>${project.build.directory}/generated/documentation/docs/rest/swagger-ui</swaggerDirectory>
 
                                     <!--
