@@ -86,7 +86,17 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>strongbox-storage-indexing</artifactId>
+            <artifactId>strongbox-storage-maven-layout-provider</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>strongbox-storage-nuget-layout-provider</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>strongbox-storage-p2-layout-provider</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -102,7 +112,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>strongbox-cron-tasks-rest</artifactId>
+            <artifactId>strongbox-cron-tasks</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
