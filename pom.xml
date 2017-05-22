@@ -110,11 +110,11 @@
             <artifactId>strongbox-web-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>strongbox-cron-tasks</artifactId>
             <version>${project.version}</version>
-        </dependency-->
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>strongbox-storage-api-resources</artifactId>
@@ -166,12 +166,12 @@
                     <plugin>
                         <groupId>com.github.kongchen</groupId>
                         <artifactId>swagger-maven-plugin</artifactId>
-                        <version>3.1.3</version>
+                        <version>3.1.4</version>
                         <configuration>
                             <apiSources>
                                 <apiSource>
-                                    <springmvc>false</springmvc>
-                                    <locations>org.carlspring.strongbox.rest</locations>
+                                    <springmvc>true</springmvc>
+                                    <locations>org.carlspring.strongbox.controllers</locations>
                                     <schemes>http,https</schemes>
                                     <host>carlspring.org</host>
                                     <basePath>/strongbox</basePath>
