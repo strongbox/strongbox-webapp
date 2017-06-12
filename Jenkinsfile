@@ -11,7 +11,7 @@ pipeline {
                           mavenSettingsConfig: 'a5452263-40e5-4d71-a5aa-4fc94a0e6833',
                           mavenLocalRepo: '/home/jenkins/.m2/repository')
                 {
-                    sh 'mvn -U clean install'
+                    sh 'mvn -U clean install -Dprepare.revision'
                 }
             }
         }
@@ -21,9 +21,8 @@ pipeline {
                           mavenSettingsConfig: 'a5452263-40e5-4d71-a5aa-4fc94a0e6833',
                           mavenLocalRepo: '/home/jenkins/.m2/repository')
                 {
-                    sh "mvn package "+
+                    sh "mvn package deploy:deploy" +
                        " -Dmaven.test.skip=true" +
-                       " deploy:deploy" +
                        " -DaltDeploymentRepository=${SERVER_ID}::default::${SERVER_URL}"
                 }
             }
