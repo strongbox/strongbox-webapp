@@ -1,4 +1,5 @@
-def REPO_NAME = 'strongbox/strongbox-webapp'
+@Library('jenkins-shared-libraries')
+
 def SERVER_ID = 'carlspring-oss-snapshots'
 def SERVER_URL = 'https://dev.carlspring.org/nexus/content/repositories/carlspring-oss-snapshots/'
 
@@ -55,6 +56,14 @@ pipeline {
         }
     }
     post {
+        changed {
+            script {
+                if(BRANCH_NAME == 'master') {
+                    def skype = new org.carlspring.jenkins.notification.skype.Skype()
+                    skype.sendNotification("admins;devs");
+                }
+            }
+        }
         always {
             deleteDir()
         }
