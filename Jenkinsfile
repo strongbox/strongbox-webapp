@@ -56,6 +56,13 @@ pipeline {
         }
     }
     post {
+        success {
+            script {
+                if(BRANCH_NAME == 'master') {
+                    build(job: "strongbox/strongbox-assembly/master", wait: false)
+                }
+            }
+        }
         changed {
             script {
                 if(BRANCH_NAME == 'master') {
