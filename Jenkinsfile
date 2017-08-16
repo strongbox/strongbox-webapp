@@ -4,53 +4,74 @@ def SERVER_ID = 'carlspring-oss-snapshots'
 def SERVER_URL = 'https://dev.carlspring.org/nexus/content/repositories/carlspring-oss-snapshots/'
 
 pipeline {
-    agent { label 'opensuse-slave' }
+    agent {
+        docker {
+            args '-v /mnt/ramdisk/3:/home/jenkins --cap-add SYS_ADMIN'
+            image 'hub.carlspring.org/jenkins/opensuse-slave:latest'
+        }
+    }
+    options {
+        timeout(time: 2, unit: 'HOURS')
+        disableConcurrentBuilds()
+        skipDefaultCheckout()
+    }
     stages {
-        stage('Build') {
+        stage('Setup workspace')
+        {
             steps {
-                withMaven(maven: 'maven-3.3.9',
-                          mavenSettingsConfig: 'a5452263-40e5-4d71-a5aa-4fc94a0e6833',
-                          mavenLocalRepo: '/home/jenkins/.m2/repository')
+                script {
+                    env.HDDWS=env.WORKSPACE
+                    env.RAMWS="/home/jenkins/workspace/"+ sh(returnStdout: true, script: 'basename "${HDDWS}"').trim()
+                    env.RAMMOUNT=env.WORKSPACE+"/ram"
+
+                    cleanWs deleteDirs: true
+                    checkout scm
+
+                    echo "Preparing workspace..."
+                    sh "mkdir -p '$RAMWS'"
+                    sh "cp -R `ls -A '$HDDWS' | grep -v .git | grep -v ram` '$RAMWS'"
+                    sh "mkdir -p '$RAMMOUNT'"
+                    sh "sudo mount --bind  '$RAMWS' '$RAMMOUNT'"
+                }
+            }
+        }
+        stage('Building...')
+        {
+            steps {
+                withMaven(maven: 'maven-3.3.9', mavenSettingsConfig: 'a5452263-40e5-4d71-a5aa-4fc94a0e6833')
                 {
-                    sh 'mvn -U clean install -Dprepare.revision'
+                    sh "cd '$RAMMOUNT' && mvn -U clean install -Dprepare.revision -Dmaven.test.failure.ignore=true"
+
+                    // unmount and copy back to hdd
+                    sh "sudo umount --force $RAMMOUNT"
+                    sh "cp -R '$RAMWS/.' '$RAMMOUNT'"
+                    sh "touch '$HDDWS/copied'"
                 }
             }
         }
         stage('Deploying to Nexus') {
+            when {
+                expression { BRANCH_NAME == 'master' && (currentBuild.result == null || currentBuild.result == 'SUCCESS') }
+            }
             steps {
-                script {
-                    if(BRANCH_NAME == 'master') {
-                        withMaven(maven: 'maven-3.3.9',
-                                  mavenSettingsConfig: 'a5452263-40e5-4d71-a5aa-4fc94a0e6833',
-                                  mavenLocalRepo: '/home/jenkins/.m2/repository')
-                        {
-                            sh "mvn package deploy:deploy" +
-                               " -Dmaven.test.skip=true" +
-                               " -DaltDeploymentRepository=${SERVER_ID}::default::${SERVER_URL}"
-                        }
-                    }
-                    else
-                    {
-                        echo "Deploying to Nexus is skipped for PRs and branches other than master."
-                    }
+                withMaven(maven: 'maven-3.3.9',
+                          mavenSettingsConfig: 'a5452263-40e5-4d71-a5aa-4fc94a0e6833')
+                {
+                    sh "mvn package deploy:deploy" +
+                       " -Dmaven.test.skip=true" +
+                       " -DaltDeploymentRepository=${SERVER_ID}::default::${SERVER_URL}"
                 }
             }
         }
         stage('Deploying to GitHub') {
+            when {
+                expression { BRANCH_NAME == 'master' && (currentBuild.result == null || currentBuild.result == 'SUCCESS') }
+            }
             steps {
-                script {
-                    if(BRANCH_NAME == 'master') {
-                        withMaven(maven: 'maven-3.3.9',
-                                  mavenSettingsConfig: 'a5452263-40e5-4d71-a5aa-4fc94a0e6833',
-                                  mavenLocalRepo: '/home/jenkins/.m2/repository')
-                        {
-                            sh "mvn package -Pdeploy-release-artifact-to-github -Dmaven.test.skip=true"
-                        }
-                    }
-                    else
-                    {
-                        echo "Deploying to GitHub is skipped for PRs and branches other than master."
-                    }
+                withMaven(maven: 'maven-3.3.9',
+                          mavenSettingsConfig: 'a5452263-40e5-4d71-a5aa-4fc94a0e6833')
+                {
+                    sh "mvn package -Pdeploy-release-artifact-to-github -Dmaven.test.skip=true"
                 }
             }
         }
@@ -72,7 +93,21 @@ pipeline {
             }
         }
         always {
-            deleteDir()
+            script {
+                // fallback copy
+                if(!fileExists(env.HDDWS+'/copied'))
+                {
+                    // unmount and copy back to hdd
+                    sh "sudo umount --force $RAMMOUNT"
+                    sh "cp -R '$RAMWS/.' '$RAMMOUNT'"
+                }
+            }
+
+            // remove unnecessary directories.
+            sh "(cd '$HDDWS' && find . -maxdepth 1 ! -name 'ram' -exec rm -rf '{}' \\;)"
+
+            // clean up ram
+            sh "rm -rf '$RAMWS'"
         }
     }
 }
