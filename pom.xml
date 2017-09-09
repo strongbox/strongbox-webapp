@@ -135,7 +135,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>strongbox-cron-tasks</artifactId>
+            <artifactId>strongbox-cron-rest</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
