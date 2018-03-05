@@ -6,8 +6,8 @@ def SERVER_URL = 'https://dev.carlspring.org/nexus/content/repositories/carlspri
 pipeline {
     agent {
         docker {
-            args '-v /mnt/ramdisk/3:/home/jenkins --privileged=true'
-            image 'hub.carlspring.org/jenkins/opensuse-slave:latest'
+            args  '-v /mnt/ramdisk/3:/home/jenkins --privileged=true'
+            image 'strongboxci/alpine:jdk8-mvn-3.5'
         }
     }
     options {
@@ -44,7 +44,7 @@ pipeline {
                     sh "cd '$RAMMOUNT' && mvn -U clean install -Dprepare.revision -Dmaven.test.failure.ignore=true"
 
                     // unmount and copy back to hdd
-                    sh "sudo umount --force $RAMMOUNT"
+                    sh "sudo umount -f $RAMMOUNT"
                     sh "cp -R '$RAMWS/.' '$RAMMOUNT'"
                     sh "touch '$HDDWS/copied'"
                 }
@@ -99,7 +99,7 @@ pipeline {
                 if(!fileExists(env.HDDWS+'/copied'))
                 {
                     // unmount and copy back to hdd
-                    sh "sudo umount --force $RAMMOUNT"
+                    sh "sudo umount -f $RAMMOUNT"
                     sh "cp -R '$RAMWS/.' '$RAMMOUNT'"
                 }
             }
