@@ -118,6 +118,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>strongbox-storage-raw-layout-provider</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>strongbox-client</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -199,7 +204,6 @@
                     <plugin>
                         <groupId>com.github.kongchen</groupId>
                         <artifactId>swagger-maven-plugin</artifactId>
-                        <version>3.1.4</version>
                         <configuration>
                             <apiSources>
                                 <apiSource>
