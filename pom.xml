@@ -62,6 +62,10 @@
                         <resource>
                             <directory>target/generated/documentation</directory>
                         </resource>
+                        <resource>
+                            <directory>${project.build.directory}/strongbox/webapp</directory>
+                            <excludes>WEB-INF</excludes>
+                        </resource>
                     </webResources>
                 </configuration>
             </plugin>
@@ -137,6 +141,12 @@
                     <artifactId>strongbox-testing-web</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>strongbox-web-ui</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -311,6 +321,27 @@
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${project.build.directory}/strongbox</outputDirectory>
                                             <includes>etc/**,webapp/**</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>unpack-web-ui</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>strongbox-web-ui</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>zip</type>
+
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/strongbox/webapp</outputDirectory>
+                                            <includes>*</includes>
                                         </artifactItem>
                                     </artifactItems>
                                 </configuration>
